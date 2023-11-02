@@ -115,12 +115,11 @@
 		const imagesContainer = document.querySelector('.images');
 		const repoOwner = 'public-cdn';
 		const repoName = 'f';
-		const token = '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'; // 请替换为你的GitHub Token
 		const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.gif'];
 
-		fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`, {
+		fetch(`https://api-github-proxy.vercel.app/repos/${repoOwner}/${repoName}/contents`, {
 			headers: {
-				'Authorization': `token ${token}`
+				'X-Token': `public-cdn`
 			}
 		})
 		.then(response => response.json())
