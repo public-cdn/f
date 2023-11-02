@@ -1,18 +1,20 @@
 # 自建图床 
 
-- [github.com/public-cdn/f](http://github.com/public-cdn/f)
+- https://github.com/public-cdn/f
+
 - https://f.laosepi.cc
+
 
 # PicX
 
-https://github.com/XPoet/picx
+- https://github.com/XPoet/picx
 
 - https://picx.xpoet.cn/
 
 
 # PicGO
 
-https://github.com/Molunerfinn/PicGo
+- https://github.com/Molunerfinn/PicGo
 
 | 下载源 | 地址/安装方式 | 平台 | 备注 |
 | --- | --- | --- | --- |
