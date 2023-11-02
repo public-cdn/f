@@ -123,7 +123,7 @@
 			const imagesContainer = document.querySelector('.images');
 			const repoOwner = 'public-cdn';
 			const repoName = 'f';
-			const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.wbep'];
+			const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
 
 			function fetchFiles(path = '') {
 				fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`, {
