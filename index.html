@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的图床</title>
+    <style>
+	    body {
+			font-family: 'Helvetica Neue', Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f8f8f7;
+			color: #333;
+		}
+		.container {
+			width: 80%;
+			margin: auto;
+			overflow: hidden;
+		}
+		header {
+			background: #fff;
+			padding: 20px 0;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		}
+		header a {
+			color: #333;
+			text-decoration: none;
+			font-size: 16px;
+			padding: 10px 15px;
+			border-radius: 4px;
+			border: 1px solid #dcdfe6;
+			background-color: #fff;
+			transition: all 0.3s;
+		}
+		header a:hover {
+			font-weight: bold;
+			transform: scale(1.1);
+			color: #333; /* or the color you want to retain */
+			background-color: #fff; /* or the background color you want to retain */
+			border-color: #dcdfe6; /* or the border color you want to retain */
+		}
+		header .current a, header a:hover {
+			background-color: #fff; /* or the background color you want to retain */
+			border-color: #dcdfe6; /* or the border color you want to retain */
+			color: #333; /* or the color you want to retain */
+		}
+		header .current a {
+			pointer-events: none;
+			cursor: default;
+		}
+		header ul {
+			padding: 0;
+			margin: 0;
+			overflow: hidden;
+		}
+		header li {
+			float: left;
+			list-style: none;
+			margin-right: 10px;
+		}
+		header #branding {
+			display: inline;
+			font-size: 24px;
+			font-weight: bold;
+			margin-right: 20px;
+		}
+		header nav {
+			float: right;
+		}
+		.main {
+			padding: 50px 0;
+			text-align: center;
+		}
+		.main h2 {
+			font-size: 36px;
+			margin-bottom: 20px;
+		}
+		.main p {
+			font-size: 18px;
+			line-height: 1.6em;
+			max-width: 600px;
+			margin: auto;
+			margin-bottom: 50px;
+		}
+		.images {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-around;
+		}
+		.images img {
+			width: 30%;
+			margin-bottom: 20px;
+			border-radius: 10px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: transform 0.3s;
+		}
+		.images img:hover {
+			transform: scale(1.05);
+		}
+		footer {
+			padding: 20px 0;
+			background-color: #fff;
+			text-align: center;
+			box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+		}
+		footer p {
+			margin: 0;
+			font-size: 14px;
+		}
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+		const imagesContainer = document.querySelector('.images');
+		const repoOwner = 'public-cdn';
+		const repoName = 'f';
+		const token = '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'; // 请替换为你的GitHub Token
+		const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.gif'];
+
+		fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents`, {
+			headers: {
+				'Authorization': `token ${token}`
+			}
+		})
+		.then(response => response.json())
+		.then(files => {
+			files.forEach(file => {
+				if (file.type === 'file' && supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
+					const img = document.createElement('img');
+					img.src = file.download_url.replace('https://raw.githubusercontent.com/public-cdn/f/master/', 'https://f.laosepi.cc/');
+					img.alt = file.name;
+					img.loading = 'lazy';
+					imagesContainer.appendChild(img);
+				}
+			});
+		})
+		.catch(error => console.error('Error fetching files from GitHub:', error));
+	});
+    </script>
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100%;">
+    <div style="flex: 1;">
+		<header>
+			<div class="container">
+				<h1 id="branding">我的图床</h1>
+				<nav>
+					<ul>
+						<li class="current"><a href="index.html">主页</a></li>
+						<li><a href="https://github.com/public-cdn/f">Github</a></li>
+						<li><a href="https://picx.xpoet.cn">PicX</a></li>
+					</ul>
+				</nav>
+			</div>
+		</header>
+		<section class="main">
+			<div class="container" >
+				<h2>欢迎来到我的图床</h2>
+				<p>这里是一个简单的图床服务，基于 <a href="https://github.com/XPoet/picx">PicX</a>管理, 托管在 <a href="https://github.com/public-cdn/f">Github</a> 存储</p>
+				<div class="images">
+					<!-- 在这里插入你的图片 -->
+				</div>
+			</div>
+		</section>
+	</div>
+    <footer>
+        <p>&copy; 2023 我的图床</p>
+    </footer>
+</body>
+</html>
