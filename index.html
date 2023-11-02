@@ -112,30 +112,35 @@
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-		const imagesContainer = document.querySelector('.images');
-		const repoOwner = 'public-cdn';
-		const repoName = 'f';
-		const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.gif'];
+			const imagesContainer = document.querySelector('.images');
+			const repoOwner = 'public-cdn';
+			const repoName = 'f';
+			const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'];
 
-		fetch(`https://https://api-github-public-cdn.vercel.app/repos/${repoOwner}/${repoName}/contents`, {
-			headers: {
-				'X-Token': `public-cdn`
+			function fetchFiles(path = '') {
+				fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`, {
+					headers: {
+					}
+				})
+				.then(response => response.json())
+				.then(files => {
+					files.forEach(file => {
+						if (file.type === 'file' && supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
+							const img = document.createElement('img');
+							img.src = file.download_url.replace('https://raw.githubusercontent.com/public-cdn/f/master/', 'https://f.laosepi.cc/');
+							img.alt = file.name;
+							img.loading = 'lazy';
+							imagesContainer.appendChild(img);
+						} else if (file.type === 'dir') {
+							fetchFiles(file.path);
+						}
+					});
+				})
+				.catch(error => console.error('Error fetching files from GitHub:', error));
 			}
-		})
-		.then(response => response.json())
-		.then(files => {
-			files.forEach(file => {
-				if (file.type === 'file' && supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
-					const img = document.createElement('img');
-					img.src = file.download_url.replace('https://raw.githubusercontent.com/public-cdn/f/master/', 'https://f.laosepi.cc/');
-					img.alt = file.name;
-					img.loading = 'lazy';
-					imagesContainer.appendChild(img);
-				}
-			});
-		})
-		.catch(error => console.error('Error fetching files from GitHub:', error));
-	});
+
+			fetchFiles();
+		});
     </script>
 </head>
 <body style="display: flex; flex-direction: column; min-height: 100%;">
