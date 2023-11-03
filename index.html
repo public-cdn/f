@@ -126,8 +126,9 @@
 			const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
 
 			function fetchFiles(path = '') {
-				fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`, {
+				fetch(`https://github-api.laosepi.cc/repos/${repoOwner}/${repoName}/contents/${path}`, {
 					headers: {
+						'x-token': `public-cdn`
 					}
 				})
 				.then(response => response.json())
