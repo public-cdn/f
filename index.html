@@ -126,7 +126,7 @@
 			const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
 
 			function fetchFiles(path = '') {
-				fetch(`https://github-api.laosepi.cc/repos/${repoOwner}/${repoName}/contents/${path}`, {
+				fetch(`https://api-github-public-cdn.vercel.app/repos/${repoOwner}/${repoName}/contents/${path}`, {
 					headers: {
 						'x-token': `public-cdn`
 					}
