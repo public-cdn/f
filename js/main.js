@@ -1,7 +1,8 @@
 const repoOwner = 'public-cdn';
 const repoName = 'f';
 const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-const ignoreNames = ["blank_popup_bg.png", "blank_popup_ico.png", "td"];
+const ignoreNames = ["CNAME", "README.md", "index.html", "404.html", "blank_popup_bg.png", "blank_popup_ico.png"];
+const ignoreDirs = ["css", "js", "td"];
 
 function isInViewport(element) {
 	const rect = element.getBoundingClientRect();
@@ -44,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			.then(files => {
 				files.forEach(file => {
 					if (file.type === 'file') {
-
 						if (!ignoreNames.includes(file.name.toLowerCase()) 
 							&& supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
 							const img = document.createElement('img');
@@ -54,7 +54,9 @@ document.addEventListener('DOMContentLoaded', function () {
 							imagesContainer.appendChild(img);
 						}
 					} else if (file.type === 'dir') {
-						fetchFiles(file.path);
+						if (!ignoreDirs.includes(file.path)){
+							fetchFiles(file.path);
+						}
 					}
 				});
 			})
