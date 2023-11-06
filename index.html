@@ -6,209 +6,18 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>我的图床</title>
-	<style>
-		body {
-			font-family: 'Helvetica Neue', Arial, sans-serif;
-			margin: 0;
-			padding: 0;
-			background-color: #f8f8f7;
-			color: #333;
-		}
-
-		.container {
-			width: 80%;
-			margin: auto;
-			overflow: hidden;
-		}
-
-		header {
-			background: #fff;
-			padding: 20px 0;
-			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-		}
-
-		header a {
-			color: #333;
-			text-decoration: none;
-			font-size: 16px;
-			padding: 10px 15px;
-			border-radius: 4px;
-			border: 1px solid #dcdfe6;
-			background-color: #fff;
-			transition: all 0.3s;
-		}
-
-		header a:hover {
-			font-weight: bold;
-			transform: scale(1.1);
-			color: #333;
-			/* or the color you want to retain */
-			background-color: #fff;
-			/* or the background color you want to retain */
-			border-color: #dcdfe6;
-			/* or the border color you want to retain */
-		}
-
-		header .current a,
-		header a:hover {
-			background-color: #fff;
-			/* or the background color you want to retain */
-			border-color: #dcdfe6;
-			/* or the border color you want to retain */
-			color: #333;
-			/* or the color you want to retain */
-		}
-
-		header .current a {
-			pointer-events: none;
-			cursor: default;
-		}
-
-		header ul {
-			padding: 0;
-			margin: 0;
-			overflow: hidden;
-		}
-
-		header li {
-			float: left;
-			list-style: none;
-			margin-right: 10px;
-		}
-
-		header #branding {
-			display: inline;
-			font-size: 24px;
-			font-weight: bold;
-			margin-right: 20px;
-		}
-
-		header nav {
-			float: right;
-		}
-
-		.main {
-			padding: 50px 0;
-			text-align: center;
-		}
-
-		.main h2 {
-			font-size: 36px;
-			margin-bottom: 20px;
-		}
-
-		.main p {
-			font-size: 18px;
-			line-height: 1.6em;
-			max-width: 600px;
-			margin: auto;
-			margin-bottom: 50px;
-		}
-
-		.images {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: space-around;
-		}
-
-		.images img {
-			width: 30%;
-			margin-bottom: 20px;
-			border-radius: 10px;
-			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-			transition: transform 0.3s;
-		}
-
-		.images img:hover {
-			transform: scale(1.05);
-		}
-
-		footer {
-			padding: 20px 0;
-			background-color: #fff;
-			text-align: center;
-			box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
-		}
-
-		footer p {
-			margin: 0;
-			font-size: 14px;
-		}
-	</style>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-	<script>
-		var _hmt = _hmt || [];
-		(function () {
-			var hm = document.createElement("script");
-			hm.src = "https://hm.baidu.com/hm.js?b092a92574264a8801c3bdf717a69f3e";
-			var s = document.getElementsByTagName("script")[0];
-			s.parentNode.insertBefore(hm, s);
-		})();
-
-		document.addEventListener('DOMContentLoaded', function () {
-			const imagesContainer = document.querySelector('.images');
-			const repoOwner = 'public-cdn';
-			const repoName = 'f';
-			const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-			const ignoreNames = ["blank_popup_bg.png", "blank_popup_ico.png"];
-
-			function isInViewport(element) {
-				const rect = element.getBoundingClientRect();
-				return (
-					rect.bottom >= 0 &&
-					rect.right >= 0 &&
-					rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-					rect.left <= (window.innerWidth || document.documentElement.clientWidth)
-				);
-			}
-
-			function loadImagesInView() {
-				const images = document.querySelectorAll('.images img[lazy="true"]');
-				images.forEach(image => {
-					if (isInViewport(image)) {
-						image.src = image.dataset.src;
-						image.removeAttribute('lazy');
-					}
-				});
-			}
-			function fetchFiles(path = '') {
-				fetch(`https://github-proxy-api.pages.dev/repos/${repoOwner}/${repoName}/contents/${path}`, {
-					headers: {
-						'Content-Type': 'application/json',
-						'x-token': 'public-cdn',
-					}
-				})
-					.then(response => response.json())
-					.then(files => {
-						files.forEach(file => {
-							if (file.type === 'file') {
-
-								if (!ignoreNames.includes(file.name.toLowerCase()) && supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
-									const img = document.createElement('img');
-									img.src = "https://f.laosepi.cc/" + file.path;
-									img.alt = file.name;
-									img.loading = 'lazy';
-									imagesContainer.appendChild(img);
-								}
-							} else if (file.type === 'dir') {
-								fetchFiles(file.path);
-							}
-						});
-					})
-					.catch(error => console.error('Error fetching files from GitHub:', error));
-			}
-			
-
-			fetchFiles();
-			// Load images when scrolling
-			document.addEventListener('scroll', loadImagesInView);
-			// Also check when the page is resized
-			window.addEventListener('resize', loadImagesInView);
-
-			loadImagesInView();
-		});
-	</script>
+	<link href="css/main.css" rel="stylesheet" type="text/css"/>
+	<script src="js/main.js"></script>
+	<script> 
+	// 百度分析
+	var _hmt = _hmt || [];
+	(function () {
+		var hm = document.createElement("script");
+		hm.src = "https://hm.baidu.com/hm.js?b092a92574264a8801c3bdf717a69f3e";
+		var s = document.getElementsByTagName("script")[0];
+		s.parentNode.insertBefore(hm, s);
+	})(); 
+	</script>	
 </head>
 
 <body style="display: flex; flex-direction: column; min-height: 100%;">
@@ -233,8 +42,10 @@
 					<!-- 在这里插入你的图片 -->
 				</div>
 			</div>
+
 		</section>
 	</div>
+	
 	<footer>
 		<p>&copy; 2023 我的图床</p>
 	</footer>
