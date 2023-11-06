@@ -4,7 +4,6 @@
 
 - https://f.laosepi.cc
 
-- api 代理 https://github.com/tdouguo/github-proxy-api
 
 # PicX
 

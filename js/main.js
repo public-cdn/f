@@ -1,7 +1,7 @@
 const repoOwner = 'public-cdn';
 const repoName = 'f';
 const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-const ignoreNames = ["blank_popup_bg.png", "blank_popup_ico.png"];
+const ignoreNames = ["blank_popup_bg.png", "blank_popup_ico.png", "td"];
 
 function isInViewport(element) {
 	const rect = element.getBoundingClientRect();
@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', function () {
 				files.forEach(file => {
 					if (file.type === 'file') {
 
-						if (!ignoreNames.includes(file.name.toLowerCase()) && supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
+						if (!ignoreNames.includes(file.name.toLowerCase()) 
+							&& supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
 							const img = document.createElement('img');
 							img.src = "https://f.laosepi.cc/" + file.path;
 							img.alt = file.name;
