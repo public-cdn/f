@@ -1,0 +1,53 @@
+name: Update Images List
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * *' # 每天运行一次
+
+jobs:
+  update-images-list:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Generate images.txt
+      run: |
+        # Create an empty images.txt file
+        echo "" > images.txt
+
+        # Define supported image formats and directories to ignore
+        SUPPORTED_IMAGE_FORMATS="(.jpg|.jpeg|.png|.gif|.bmp|.webp)"
+        IGNORE_NAMES=("CNAME" "README.md" "index.html" "404.html" "blank_popup_bg.png" "blank_popup_ico.png")
+        IGNORE_DIRS=("css" "js" "td")
+
+        # Find and append image files to images.txt
+        find . -type f | grep -Ei $SUPPORTED_IMAGE_FORMATS | while read -r file; do
+          # Get the file name and directory
+          FILE_NAME=$(basename "$file")
+          FILE_DIR=$(dirname "$file")
+
+          # Check if the file or directory should be ignored
+          if [[ ! " ${IGNORE_NAMES[@]} " =~ " ${FILE_NAME} " ]] && [[ ! " ${IGNORE_DIRS[@]} " =~ " ${FILE_DIR} " ]]; then
+            echo "$file" >> images.txt
+          fi
+        done
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add images.txt
+        git commit -m "Update images list"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
