@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main
-  schedule:
-    - cron: '0 0 * * *' # 每天运行一次
-  workflow_dispatch: # 手动触发
+  # schedule:
+  #   - cron: '0 0 * * *' # Runs once a day
+  workflow_dispatch: # Manual trigger
 
 jobs:
   update-images-list:
@@ -39,7 +39,7 @@ jobs:
     
           # Check if the file or directory should be ignored
           if [[ ! " ${IGNORE_NAMES[@]} " =~ " ${FILE_NAME} " ]] && [[ ! " ${IGNORE_DIRS[@]} " =~ " ${FILE_DIR} " ]]; then
-            # Replace ./ with https://f.laosepi.cc/
+            # Replace ./ with your site's URL
             FILE_PATH=$(echo "$file" | sed 's|^\./|https://f.laosepi.cc/|')
             echo "$FILE_PATH" >> new_images.txt
           fi
@@ -48,33 +48,36 @@ jobs:
         # Remove any leading or trailing empty lines
         sed -i '/^$/d' new_images.txt
 
-
     - name: Check for changes
       run: |
-        # 创建images.txt如果它不存在
+        # Create images.txt if it does not exist
         touch images.txt
 
-        # 对比 new_images.txt 和 images.txt
+        # Compare new_images.txt and images.txt
         if ! cmp -s new_images.txt images.txt; then
-          # 如果文件不同，则替换images.txt
+          # If the files are different, replace images.txt
           mv new_images.txt images.txt
           echo "Images list updated, changes detected."
+          echo "Changes detected." > change_flag.txt
         else
           echo "No changes detected."
           rm new_images.txt
         fi
 
     - name: Commit and push changes
+      if: ${{ always() }} && env.CHANGE_DETECTED == 'true'
       run: |
-        # 确认是否有需要提交的更改
-        if ! git diff --quiet; then
+        # Check for any changes to commit
+        if [ -f change_flag.txt ]; then
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add images.txt
           git commit -m "Update images list"
           git pull --rebase
           git push
+          echo "Changes committed and pushed."
         else
           echo "No changes to commit."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CHANGE_DETECTED: ${{ steps.change-check.outputs.changed }}
