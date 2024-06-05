@@ -78,6 +78,7 @@ jobs:
           echo "Changes committed and pushed."
         else
           echo "No changes to commit."
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         CHANGE_DETECTED: ${{ steps.change-check.outputs.changed }}
