@@ -23,15 +23,15 @@ jobs:
 
     - name: Generate images.txt
       run: |
-        # Create an empty images.txt file
-        echo "" > images.txt
+        # Create a temporary new_images.txt file
+        echo "" > new_images.txt
 
         # Define supported image formats and directories to ignore
         SUPPORTED_IMAGE_FORMATS="(.jpg|.jpeg|.png|.gif|.bmp|.webp)"
         IGNORE_NAMES=("CNAME" "README.md" "index.html" "404.html" "blank_popup_bg.png" "blank_popup_ico.png")
         IGNORE_DIRS=("css" "js" "td")
 
-        # Find and append image files to images.txt
+        # Find and append image files to new_images.txt
         find . -type f | grep -Ei $SUPPORTED_IMAGE_FORMATS | while read -r file; do
           # Get the file name and directory
           FILE_NAME=$(basename "$file")
@@ -39,16 +39,35 @@ jobs:
 
           # Check if the file or directory should be ignored
           if [[ ! " ${IGNORE_NAMES[@]} " =~ " ${FILE_NAME} " ]] && [[ ! " ${IGNORE_DIRS[@]} " =~ " ${FILE_DIR} " ]]; then
-            echo "$file" >> images.txt
+            # Replace ./images/ with https://f.laosepi.cc/ and append to new_images.txt
+            FILE_PATH=$(echo "$file" | sed 's|^./images/|https://f.laosepi.cc/|')
+            echo "$FILE_PATH" >> new_images.txt
           fi
         done
 
+    - name: Check for changes
+      run: |
+        # Compare the new_images.txt with the existing images.txt
+        if ! cmp -s new_images.txt images.txt; then
+          # If the files are different, replace images.txt with the new file
+          mv new_images.txt images.txt
+          echo "Images list updated."
+        else
+          echo "No changes detected."
+          rm new_images.txt
+        fi
+
     - name: Commit and push changes
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add images.txt
-        git commit -m "Update images list"
-        git push
+        # Check if images.txt has changes
+        if git diff --exit-code images.txt; then
+          echo "No changes to commit."
+        else
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add images.txt
+          git commit -m "Update images list"
+          git push
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
