@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Random Image Redirect</title>
+    <script>
+        // 页面加载完毕后执行
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('images.txt')
+                .then(response => response.text())
+                .then(text => {
+                    const lines = text.split('\n').filter(line => line.trim() !== ''); // 过滤空行
+                    const randomLine = lines[Math.floor(Math.random() * lines.length)];
+                    window.location.href = randomLine; // 进行重定向
+                })
+                .catch(err => console.error('Error fetching images.txt:', err));
+        });
+    </script>
+</head>
+<body>
+    <p>Redirecting to a random image...</p>
+</body>
+</html>
