@@ -3,9 +3,9 @@ name: Update Images List
 on:
   push:
     branches:
-      - master
-  # schedule:
-    # - cron: '0 0 * * *' # 每天运行一次
+      - main
+  schedule:
+    - cron: '0 0 * * *' # 每天运行一次
   workflow_dispatch: # 手动触发
 
 jobs:
@@ -21,15 +21,15 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Generate images.txt
+    - name: Generate new_images.txt
       run: |
-        # Create a temporary new_images.txt file
-        echo "" > new_images.txt
-
         # Define supported image formats and directories to ignore
         SUPPORTED_IMAGE_FORMATS="(.jpg|.jpeg|.png|.gif|.bmp|.webp)"
         IGNORE_NAMES=("CNAME" "README.md" "index.html" "404.html" "blank_popup_bg.png" "blank_popup_ico.png")
         IGNORE_DIRS=("css" "js" "td")
+
+        # Create a temporary new_images.txt file
+        echo "" > new_images.txt
 
         # Find and append image files to new_images.txt
         find . -type f | grep -Ei $SUPPORTED_IMAGE_FORMATS | while read -r file; do
@@ -39,14 +39,22 @@ jobs:
 
           # Check if the file or directory should be ignored
           if [[ ! " ${IGNORE_NAMES[@]} " =~ " ${FILE_NAME} " ]] && [[ ! " ${IGNORE_DIRS[@]} " =~ " ${FILE_DIR} " ]]; then
-            # Replace ./images/ with https://f.laosepi.cc/ and append to new_images.txt
-            FILE_PATH=$(echo "$file" | sed 's|^./images/|https://f.laosepi.cc/|')
+            # Replace ./images/ with https://f.laosepi.cc/images/ and ./ with https://f.laosepi.cc/
+            FILE_PATH=$(echo "$file" | sed 's|^./images/|https://f.laosepi.cc/images/|; s|^./|https://f.laosepi.cc/|')
             echo "$FILE_PATH" >> new_images.txt
           fi
         done
 
+        # Remove any leading or trailing empty lines
+        sed -i '/^$/d' new_images.txt
+
     - name: Check for changes
       run: |
+        # If images.txt doesn't exist, create an empty one for comparison
+        if [ ! -f images.txt ]; then
+          echo "" > images.txt
+        fi
+
         # Compare the new_images.txt with the existing images.txt
         if ! cmp -s new_images.txt images.txt; then
           # If the files are different, replace images.txt with the new file
@@ -65,6 +73,7 @@ jobs:
         else
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add images.txt
           git commit -m "Update images list"
           git push
