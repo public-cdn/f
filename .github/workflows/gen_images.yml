@@ -27,39 +27,38 @@ jobs:
         SUPPORTED_IMAGE_FORMATS="(.jpg|.jpeg|.png|.gif|.bmp|.webp)"
         IGNORE_NAMES=("CNAME" "README.md" "index.html" "404.html" "blank_popup_bg.png" "blank_popup_ico.png")
         IGNORE_DIRS=("css" "js" "td")
-
+    
         # Create a temporary new_images.txt file
         echo "" > new_images.txt
-
+    
         # Find and append image files to new_images.txt
         find . -type f | grep -Ei $SUPPORTED_IMAGE_FORMATS | while read -r file; do
           # Get the file name and directory
           FILE_NAME=$(basename "$file")
           FILE_DIR=$(dirname "$file")
-
+    
           # Check if the file or directory should be ignored
           if [[ ! " ${IGNORE_NAMES[@]} " =~ " ${FILE_NAME} " ]] && [[ ! " ${IGNORE_DIRS[@]} " =~ " ${FILE_DIR} " ]]; then
-            # Replace ./images/ with https://f.laosepi.cc/images/ and ./ with https://f.laosepi.cc/
-            FILE_PATH=$(echo "$file" | sed 's|^./images/|https://f.laosepi.cc/images/|; s|^./|https://f.laosepi.cc/|')
+            # Replace ./ with https://f.laosepi.cc/
+            FILE_PATH=$(echo "$file" | sed 's|^\./|https://f.laosepi.cc/|')
             echo "$FILE_PATH" >> new_images.txt
           fi
         done
-
+    
         # Remove any leading or trailing empty lines
         sed -i '/^$/d' new_images.txt
 
+
     - name: Check for changes
       run: |
-        # If images.txt doesn't exist, create an empty one for comparison
-        if [ ! -f images.txt ]; then
-          echo "" > images.txt
-        fi
+        # 创建images.txt如果它不存在
+        touch images.txt
 
-        # Compare the new_images.txt with the existing images.txt
+        # 对比 new_images.txt 和 images.txt
         if ! cmp -s new_images.txt images.txt; then
-          # If the files are different, replace images.txt with the new file
+          # 如果文件不同，则替换images.txt
           mv new_images.txt images.txt
-          echo "Images list updated."
+          echo "Images list updated, changes detected."
         else
           echo "No changes detected."
           rm new_images.txt
@@ -67,16 +66,15 @@ jobs:
 
     - name: Commit and push changes
       run: |
-        # Check if images.txt has changes
-        if git diff --exit-code images.txt; then
-          echo "No changes to commit."
-        else
+        # 确认是否有需要提交的更改
+        if ! git diff --quiet; then
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
           git add images.txt
           git commit -m "Update images list"
+          git pull --rebase
           git push
-        fi
+        else
+          echo "No changes to commit."
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
