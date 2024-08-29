@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
 						if (!ignoreNames.includes(file.name.toLowerCase()) 
 							&& supportedImageFormats.some(format => file.name.toLowerCase().endsWith(format))) {
 							const img = document.createElement('img');
-							img.src = "https://f.laosepi.cc/" + file.path;
+							img.src = "https://f.960517.xyz/" + file.path;
 							img.alt = file.name;
 							img.loading = 'lazy';
 							imagesContainer.appendChild(img);
