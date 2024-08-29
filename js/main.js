@@ -2,7 +2,7 @@ const repoOwner = 'public-cdn';
 const repoName = 'f';
 const supportedImageFormats = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
 const ignoreNames = ["CNAME", "README.md", "index.html", "404.html", "blank_popup_bg.png", "blank_popup_ico.png"];
-const ignoreDirs = ["css", "js", "td"];
+const ignoreDirs = [".github", "code", "css", "js", "td"];
 
 function isInViewport(element) {
 	const rect = element.getBoundingClientRect();
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const imagesContainer = document.querySelector('.images');
 
 	function fetchFiles(path = '') {
-		fetch(`https://github-proxy-api.pages.dev/repos/${repoOwner}/${repoName}/contents/${path}`, {
+		fetch(`https://gh-api.960517.xyz/repos/${repoOwner}/${repoName}/contents/${path}`, {
 			headers: {
 				'Content-Type': 'application/json',
 				'x-token': 'public-cdn',
