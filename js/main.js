@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	const imagesContainer = document.querySelector('.images');
 
 	function fetchFiles(path = '') {
-		fetch(`https://gh-api.960517.xyz/repos/${repoOwner}/${repoName}/contents/${path}`, {
+		fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${path}`, {
 			headers: {
 				'Content-Type': 'application/json',
 				'x-token': 'public-cdn',
